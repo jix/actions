@@ -1,0 +1,44 @@
+name: "Rust Tests"
+description: |
+  Runs Rust tests
+
+inputs:
+  toolchain:
+    required: false
+    default: stable
+  target:
+    required: false
+    default: ''
+  feature-flags:
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ inputs.toolchain }}
+        target: ${{ inputs.target }}
+        override: true
+
+    - if: ${{ inputs.target == 'i686-unknown-linux-gnu' }}
+      name: Install 32-bit system toolchain
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-multilib -y
+
+    - if: ${{ inputs.target == '' }}
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --workspace --all-targets ${{ inputs.feature-flags }}
+
+    - if: ${{ inputs.target != '' }}
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+        args: --workspace --all-targets --target "${{ inputs.target }}" ${{ inputs.feature-flags }}
+

@@ -1,0 +1,10 @@
+name: "Rust Audit"
+description: |
+  Audits Rust dependencies
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions-rs/audit-check@v1
+      with:
+        token: ${{ github.token }}

@@ -1,0 +1,31 @@
+name: "Rust Lints"
+description: |
+  Checks rust code using rustfmt and clippy
+
+inputs:
+  toolchain:
+    required: false
+    default: stable
+  feature-flags:
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: ${{ inputs.toolchain }}
+        override: true
+        components: clippy, rustfmt
+
+    - uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: --all -- --check
+
+    - uses: actions-rs/clippy-check@v1
+      with:
+        token: ${{ github.token }}
+        args: --workspace --all-targets ${{ inputs.feature-flags }} -- -D warnings

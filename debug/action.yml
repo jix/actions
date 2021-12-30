@@ -1,0 +1,26 @@
+name: "Debug Action"
+description: |
+  just some debugging
+
+inputs:
+  optionality:
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        DATA: |
+          inputs: ${{ toJSON(inputs) }}
+          github: ${{ toJSON(github) }}
+          env: ${{ toJSON(env) }}
+          job: ${{ toJSON(job) }}
+          steps: ${{ toJSON(steps) }}
+          runner: ${{ toJSON(runner) }}
+          strategy: ${{ toJSON(strategy) }}
+          matrix: ${{ toJSON(matrix) }}
+      run: |
+        echo "$DATA"
+        env
+
